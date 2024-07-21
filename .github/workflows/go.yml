@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.18, 1.19]
+        go-version: [1.16, 1.17, 1.18]
         os: [linux, windows, macos]
         goarch: [amd64, arm64]
 
@@ -30,21 +30,31 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Install dependencies for arm64
+        if: matrix.goarch == 'arm64'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
       - name: Build
         run: |
-          echo "Start building."
-          go get .
           mkdir -p dist
           GOOS=${{ matrix.os }}
           GOARCH=${{ matrix.goarch }}
-          OUTPUT_NAME=myapp-${GOOS}-${GOARCH}
+          OUTPUT_NAME=waka-nightly-${GOOS}-${GOARCH}
           if [ "$GOOS" == "windows" ]; then
             OUTPUT_NAME=${OUTPUT_NAME}.exe
           fi
-          go build -o dist/${OUTPUT_NAME}
+          if [ "$GOARCH" == "arm64" ]; then
+            CC=aarch64-linux-gnu-gcc
+          else
+            CC=gcc
+          fi
+          echo "Building for $GOOS/$GOARCH with CC=$CC"
+          env CGO_ENABLED=1 CC=$CC GOOS=$GOOS GOARCH=$GOARCH go build -o dist/${OUTPUT_NAME}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: waka-${{ matrix.os }}-${{ matrix.goarch }}-golang${{ matrix.go-version }}
+          name: myapp-${{ matrix.os }}-${{ matrix.goarch }}-${{ matrix.go-version }}
           path: dist/
