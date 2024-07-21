@@ -13,14 +13,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
         go-version: [1.18, 1.19]
         os: [linux, windows, darwin]
         goarch: [amd64, arm64]
 
+      
+    runs-on: ${{ matrix.os }}-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
