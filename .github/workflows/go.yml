@@ -56,5 +56,5 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: myapp-${{ matrix.os }}-${{ matrix.goarch }}-${{ matrix.go-version }}
+          name: waka-nightly-${{ matrix.os }}-${{ matrix.goarch }}-${{ matrix.go-version }}
           path: dist/
