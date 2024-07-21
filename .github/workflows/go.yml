@@ -32,6 +32,8 @@ jobs:
 
       - name: Build
         run: |
+          go mod init
+          go get .
           mkdir -p dist
           GOOS=${{ matrix.os }}
           GOARCH=${{ matrix.goarch }}
