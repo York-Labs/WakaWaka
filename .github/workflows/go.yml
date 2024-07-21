@@ -32,7 +32,7 @@ jobs:
 
       - name: Build
         run: |
-          go mod init
+          echo "Start building."
           go get .
           mkdir -p dist
           GOOS=${{ matrix.os }}
